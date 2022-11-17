@@ -1,13 +1,10 @@
 package repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Objects;
 
-public class Country extends Repository{
+public class Country extends CountryRepository{
     private String name;
-    private int isoCode;
+    private final int isoCode;
 
     public Country(String name, int isoCode) {
         this.name = name;
@@ -15,61 +12,30 @@ public class Country extends Repository{
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public int getIsoCode() {
-        return isoCode;
-    }
-
-    public void setIsoCode(int isoCode) {
-        this.isoCode = isoCode;
+        return this.isoCode;
     }
 
     @Override
-    public List<Country> getAllSortedBy(String attribute) {
-        List<Country> newList = new ArrayList<>(this.getList());
-        System.out.println("sorting countries by: " + attribute);
-
-        if (attribute.equalsIgnoreCase("name")) {
-            Country.NameCompare nc = this.new NameCompare();
-            Collections.sort(newList, nc);
-        } else if (attribute.equalsIgnoreCase("isocode")) {
-            Country.IsoCodeCompare icc = this.new IsoCodeCompare();
-            Collections.sort(newList, icc);
-        } else{
-            System.out.println("not a valid attribute");
-        }
-
-        return newList;
-    }
-
-
-    class NameCompare implements Comparator<Country> {
-
-        @Override
-        public int compare(Country c1, Country c2) {
-            return c1.getName().compareToIgnoreCase(c2.getName());
-        }
-    }
-
-    class IsoCodeCompare implements Comparator<Country> {
-
-        @Override
-        public int compare(Country c1, Country c2) {
-            if (c1.getIsoCode() > c2.getIsoCode()) {
-                return 1;
-            }
-            else if (c1.getIsoCode() < c2.getIsoCode()) {
-                return -1;
-            } else {
-                return 0;
+    public boolean equals(Object o) {
+        if (o instanceof Country) {
+            Country otherCountry = (Country)o;
+            if (this.getIsoCode() == otherCountry.getIsoCode()) {
+                return true;
+            } else{
+                return false;
             }
         }
+        else{
+            return false;
+        }
     }
 
-
-
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(isoCode) + 31;
+    }
 }

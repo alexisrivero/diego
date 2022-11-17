@@ -2,7 +2,7 @@ package repository;
 
 import java.util.*;
 
-public class User extends Repository{
+public class User extends UserRepository{
     private String userName;
     private String firstName;
     private String lastName;
@@ -23,20 +23,16 @@ public class User extends Repository{
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public void addEmail(String email) {
-        emails.add(email);
+        if (this.getEmails().contains(email)) {
+            System.out.println("email already exists");
+        } else{
+            emails.add(email);
+        }
     }
 
     public List<String> getEmails() {
@@ -53,49 +49,6 @@ public class User extends Repository{
         return set;
     }
 
-    @Override
-    public List<User> getAllSortedBy(String attribute) {
-//        List<User> newList = new ArrayList<>(this.getList());
-        System.out.println("sorting users by: " + attribute);
-        if (attribute.equalsIgnoreCase("username")) {
-            User.UserNameCompare unc = this.new UserNameCompare();
-            Collections.sort(this.getList(), unc);
-        }else if(attribute.equalsIgnoreCase("firstname")){
-            User.FirstNameCompare fnc = this.new FirstNameCompare();
-            Collections.sort(this.getList(), fnc);
-        } else if(attribute.equalsIgnoreCase("lastname")) {
-            User.LastNameCompare lnc = this.new LastNameCompare();
-            Collections.sort(this.getList(), lnc);
-        } else{
-            System.out.println("not a valid attribute");
-        }
 
-        return this.getList();
-    }
-
-
-    class UserNameCompare implements Comparator<User> {
-
-        @Override
-        public int compare(User u1, User u2) {
-            return u1.getUserName().compareToIgnoreCase(u2.getUserName());
-        }
-    }
-
-    class FirstNameCompare implements Comparator<User> {
-
-        @Override
-        public int compare(User u1, User u2) {
-            return u1.getFirstName().compareToIgnoreCase(u2.getFirstName());
-        }
-    }
-
-    class LastNameCompare implements Comparator<User> {
-
-        @Override
-        public int compare(User u1, User u2) {
-            return u1.getLastName().compareToIgnoreCase(u2.getLastName());
-        }
-    }
 
 }

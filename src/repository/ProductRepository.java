@@ -1,33 +1,29 @@
-package repo2;
+package repository;
 
 import java.util.*;
 
-public class Product<T> extends Repository<T>{
-
-    private String name;
-    private int stock;
-
-    public Product(String name, int stock) {
-        this.name = name;
-        this.stock = stock;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-
+public class ProductRepository<T extends Product> implements IRepository<T>{
+    List<T> list = new ArrayList<>();
+    static final Comparator<Product> NAME_ORDER = new Comparator<Product>() {
+        @Override
+        public int compare(Product p1, Product p2) {
+            return p1.getName().compareToIgnoreCase(p2.getName());        }
+    };
+    static final Comparator<Product> STOCK_ORDER = new Comparator<Product>() {
+        @Override
+        public int compare(Product p1, Product p2) {
+            if (p1.getStock() > p2.getStock()) {
+                return 1;
+            } else if (p1.getStock() < p2.getStock()) {
+                return -1;
+            } else{
+                return 0;
+            }
+        }
+    };
 
     public List<T> getList() {
-        return super.list;
+        return list;
     }
 
     @Override
@@ -36,11 +32,10 @@ public class Product<T> extends Repository<T>{
             System.out.println("element is already on the " + element.getClass().getSimpleName() + " list");
             return false;
         }
-        this.list.add(element);
+        this.getList().add(element);
         System.out.println("element added to the " + element.getClass().getSimpleName() + " list!");
         return true;
     }
-
 
     @Override
     public int count() {
@@ -63,40 +58,20 @@ public class Product<T> extends Repository<T>{
 
     @Override
     public List<T> getAllSortedBy(String attribute) {
-//        List<Product> newList = new ArrayList<>(this.getList());
         System.out.println("sorting products by: " + attribute);
         if (attribute.equalsIgnoreCase("name")) {
-            Product.NameCompare nc = this.new NameCompare();
-            Collections.sort(this.list, nc);
+            Collections.sort(this.getList(), this.NAME_ORDER);
         } else if ( attribute.equalsIgnoreCase("stock")) {
-            Product.StockCompare sc = this.new StockCompare();
-            Collections.sort(this.list, sc);
+            Collections.sort(this.getList(), this.STOCK_ORDER);
         } else{
             System.out.println("not a valid attribute");
         }
-        return this.list;
+        return this.getList();
     }
 
-
-    class NameCompare implements Comparator<repository.Product> {
-
-        @Override
-        public int compare(repository.Product p1, repository.Product p2) {
-            return p1.getName().compareToIgnoreCase(p2.getName());
-        }
-    }
-
-    class StockCompare implements Comparator<repository.Product> {
-
-        @Override
-        public int compare(repository.Product p1, repository.Product p2) {
-            if (p1.getStock() > p2.getStock()) {
-                return 1;
-            } else if (p1.getStock() < p2.getStock()) {
-                return -1;
-            } else{
-                return 0;
-            }
+    public void printList() {
+        for (Product p: list) {
+            System.out.println(" " + p.getName() + " " + p.getStock());
         }
     }
 
